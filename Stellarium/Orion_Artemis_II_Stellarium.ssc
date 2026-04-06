@@ -1,0 +1,168 @@
+// Name: Orion - Artemis II Tracking Script
+// Author: Shawn Gano
+// License: Public Domain
+// Version: 1.1
+// Description: Visualizes the location of the Orion Spacecraft during the Artemis II mission. 
+//              This script uses a data file generated for a specfic location and specific launch date. Be sure this is correct for your current location. 
+//              NOTE: This script loops indefinitely and must be stopped manually (updates 4 times a second).  This updates whenever the time is changed in the GUI.  It is best use while the time is paused and the time is manually changed / stepped.  Be sure to use times during the mission (otherwise there is nothing to see).
+
+// ----------------------------------------------------------------------------------
+//  Stellarium Script to track Artemis II - loops indefinitely until manually stopped
+//
+//  Shawn Gano  
+//           V1.0: 17 Feb 2026
+//           V1.1: 15 Mar 2026 - clean-up / refactoring
+//  
+//  Place in folder:  '/Applications/Astronomy/ Stellarium.app/Contents/Resources/scripts' (MacOS)
+//  
+//  In Stellarium press F12 to open Script Console to run / see results as needed
+//
+//   SCRIPT runs forever, needs to be stopped manually (via F12 console or Configuration Window-> scripts)
+//
+//  Script API doc:  https://stellarium.org/doc/25.0/scripting.html
+
+// Import custom functions (library) as well as custom data: (be sure both files are located in the same directory as this one)
+include("Orion_Artemis_II_Library.inc");
+include("Orion_Artemis_II_Data.inc");
+
+// Clear existing custom objects
+CustomObjectMgr.removeCustomObjects();
+
+// Example Outputting to Log in Stellarium
+core.debug("Running Script to Update Artemis II Location! (Log) -- To stop use the script console (F12)");
+core.output("Running Script to Update Artemis II Location! (output) -- To stop use the script console (F12)");
+
+
+//  ----- TESTING Adding Custom Object: 
+//RA/Dec ON DATE is what is entered here....
+//CustomObjectMgr.addCustomObjectRaDec("Artemis II", "11h20m30.1s", "+13d14m41.3s", true);
+
+// This version is RA/DEC J2000.0   --  I beleive this can have spaces in it as well and it still works
+//CustomObjectMgr.addCustomObject("Artemis II", "11h19m07.7s", "+13d23m18.2s", true);
+//var decTest = 13.3883888889;
+//CustomObjectMgr.addCustomObject("Artemis II", "11h19m07.7s",  degToDmsString(decTest)  , true);
+// -----------------
+
+
+// -----  TEST INTERPOLATION -----------------
+/*
+ // Sample data points (must be sorted by x-value)
+ const dataPoints = [
+ [0, 1],
+ [1, 2],
+ [2, 3],
+ [3, 5],
+ [4, 7],
+ [5, 10]
+ ];
+
+// Example of interpolating a value within the range  (Function in Library -- Data in included Datafile!)
+const xValue1 = 2.5;
+const interpolatedValue1 = lookupTableLinearInterpolation(dataPoints, xValue1);
+core.debug(`For x = ${xValue1}, the interpolated y value is: ${interpolatedValue1}`); 
+// Output: For x = 2.5, the interpolated y value is: 4
+
+// Example of interpolating an exact data point
+const xValue2 = 3;
+const interpolatedValue2 = lookupTableLinearInterpolation(dataPoints, xValue2);
+core.debug(`For x = ${xValue2}, the interpolated y value is: ${interpolatedValue2}`);
+// Output: For x = 3, the interpolated y value is: 5
+
+// Example of a value outside the range
+const xValue3 = 6;
+const interpolatedValue3 = lookupTableLinearInterpolation(dataPoints, xValue3);
+core.debug(`For x = ${xValue3}, the interpolated y value is: ${interpolatedValue3}`);
+// Output: For x = 6, the interpolated y value is: null
+*/
+// -----  --------------- -----------------
+
+// Note:  setInterval() from javascript doesn't work in Stellarium API -- using core.wait() in a loop seems to work though:
+
+
+// ---------   Infinite Loop ------------------------
+// checks current time - if it has changed, then update the position, otherwise just wait/sleep for a bit and repeat
+
+// Get initial time
+let lastTime = core.getJDay();
+
+// TODO:   check for null values -- intial and in loop!!!! ?
+
+
+// Set initial location
+var orionRa = lookupTableLinearInterpolation(raLookupTable, lastTime);
+var orionDec = lookupTableLinearInterpolation(decLookupTable, lastTime);
+// add custom object with new location
+if( orionRa != null && orionDec != null)
+{
+	CustomObjectMgr.addCustomObject("Artemis II", raHoursToHmsString(orionRa),  degToDmsString(orionDec)  , true);
+}
+
+// J2000 - doesn't work only used for pointing vector, assumes infinitely far away object - which is not the case here
+// Test object added with J2000 coordinates (in AU) -- not sure if only supposed to use unit vector.... hoping this may work for any location
+//var orionX = lookupTableLinearInterpolation(xLookupTable, lastTime);
+//var orionY = lookupTableLinearInterpolation(yLookupTable, lastTime);
+//var orionZ = lookupTableLinearInterpolation(zLookupTable, lastTime);
+//var positionXYZ = core.vec3d(orionX,orionY,orionZ); // Example  vector
+//if( orionX != null && orionY != null && orionZ != null)
+//{
+//	CustomObjectMgr.addCustomObject("J2000", positionXYZ, true);
+//}
+
+var i = 0;
+//while (i < 500) // to limit length of script run
+while (true)  // run forever
+{
+    // 
+    //core.debug("Running action");
+
+    // get current time
+    const currentTime = core.getJDay(); 
+    
+    if (currentTime !== lastTime) 
+    {  
+	
+	//core.debug("Time changed! New Orion Position.");
+	
+
+        // NOTE - need to remove old one
+        CustomObjectMgr.removeCustomObject("Artemis II");
+        //CustomObjectMgr.removeCustomObject("J2000");  // J2000 version (for now)
+
+
+        // add updated location - TEST
+        //CustomObjectMgr.addCustomObject("Artemis II", "11h19m07.7s",  degToDmsString(decTest+i/60.0 )  , true);
+	
+	// calculate new location
+	orionRa = lookupTableLinearInterpolation(raLookupTable, currentTime);
+	orionDec = lookupTableLinearInterpolation(decLookupTable, currentTime);
+
+	// J2000 version (for now) -- DOESN'T WORK - only for infinitely far objects
+	//orionX = lookupTableLinearInterpolation(xLookupTable, currentTime);
+	//orionY = lookupTableLinearInterpolation(yLookupTable, currentTime);
+	//orionZ = lookupTableLinearInterpolation(zLookupTable, currentTime);
+
+
+	// add custom object with new location - if data is not null (within time range)
+	if( orionRa != null && orionDec != null)
+	{
+		CustomObjectMgr.addCustomObject("Artemis II", raHoursToHmsString(orionRa),  degToDmsString(orionDec)  , true);
+		
+		// J2000 for now
+		//positionXYZ = core.vec3d(orionX,orionY,orionZ);
+		//CustomObjectMgr.addCustomObject("J2000", positionXYZ, true);
+
+	}
+
+        // update/save time to lastTime
+        lastTime = currentTime; // save time to
+
+    } // if time changed
+     
+
+    core.wait(0.25); // Wait  [seconds] before next iteration
+
+    i++; // increment
+
+} // while - check for changes to the time
+
+core.debug("Bye!");

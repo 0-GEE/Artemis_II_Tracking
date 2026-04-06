@@ -1,0 +1,7 @@
+*.asc
+*.bsp
+.env
+Stellarium/Orion_Artemis_II_Data.inc
+*.DS_Store
+env/*
+venv/*

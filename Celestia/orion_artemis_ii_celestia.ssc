@@ -1,0 +1,26 @@
+
+"Orion" "Sol/Earth" 
+{
+	# Orion - Artemis II  Celestia Spacecraft File
+	#
+	# COMMENT Orion/Planning
+	#
+	#   --> copy this file along with .xyzv file to: /  (then restart Celestia to load)
+	#       Celestia.app/Contents/Resources/CelestiaResources/data   (MacOS) [Or wherever app is]
+	#   --> MUST UPDATE  celestia.cfg   --> ADD  "data/orion_artemis_ii_celestia.ssc" ]  to SolarSystemCatalogs  
+	#         /Users/USERNAME/Desktop/Celestia.app/Contents/Resources/CelestiaResources/celestia.cfg   (MacOs) [Or wherever app is]
+	#
+	#   --> be sure to have correct capitalization on files!
+	#
+    
+	Class "spacecraft"
+	#Radius 0.009                  # 18 meters across - Solar array wings
+	Beginning         2461132.5816797307 
+	Ending            2461141.4953380376 
+
+	OrbitFrame { EquatorJ2000 { Center "Sol/Earth" } }	
+	SampledTrajectory { Source "Orion_Artemis_II_Traj_Celestia.xyzv" }
+
+	Albedo       1.0
+}
+
