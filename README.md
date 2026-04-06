@@ -1,7 +1,7 @@
 # Artemis II Tracking
 
 This project is a fork of [Shawn Gano's script](https://www.gano.name/shawn/artemis2/).
-It generates ground-observation planing data and visualization files for Artemis II / Orion using an OEM ephemeris file which can be downloaded from [NASA's website](https://www.nasa.gov/missions/artemis/artemis-2/track-nasas-artemis-ii-mission-in-real-time/) (scroll to the bottom of the article under "Download Artemis II ephemeris data here").
+It generates ground-observation planning data and visualization files for Artemis II / Orion using an OEM ephemeris file which can be downloaded from [NASA's website](https://www.nasa.gov/missions/artemis/artemis-2/track-nasas-artemis-ii-mission-in-real-time/) (scroll to the bottom of the article under "Download Artemis II ephemeris data here").
 
 The included script is essentially a carbon copy of the original, except the configuration has been
 moved to a separate file so that the data generation can be configured without having to
