@@ -12,7 +12,12 @@ Python 3 is required to use. Download it [Here](https://www.python.org/downloads
 
 ## Setup
 
-1. Clone this repository.
+1. Clone this repository:
+
+```bash
+git clone https://github.com/0-GEE/Artemis_II_Tracking.git
+cd Artemis_II_Tracking
+```
 
 2. Create a virtual environment:
 
