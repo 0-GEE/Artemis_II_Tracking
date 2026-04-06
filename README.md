@@ -46,6 +46,7 @@ pip install -r requirements.txt
 
 Create a file called `.env` (use that exact name) and copy the contents of `.env.example`
 into this file. This file stores the configuration that the script will use at runtime.
+**Update the configuration variables as needed.**
 
 `.env` configuration template:
 
